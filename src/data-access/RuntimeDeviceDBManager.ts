@@ -1,12 +1,14 @@
 import moment from 'moment';
-import { DeviceDBManager } from '../types/DeviceDB';
-import { Device } from '../types/Device';
+import { Device, DeviceDBManager } from '../types';
 
 export class RuntimeDeviceDBManager implements DeviceDBManager {
+    readonly prefix = `[RuntimeDeviceDBManager]`;
 
     private _devices: { [deviceId: string]: { device: Device } } = {};
 
     UpdateDevice(device: Device): void {
+        // console.log(`${this.prefix} UpdateDevice called with:`);
+        // console.log(device);
         this._devices[device.deviceId] = { device };
     }
 
@@ -15,14 +17,23 @@ export class RuntimeDeviceDBManager implements DeviceDBManager {
     }
 
     UpdateDeviceHeartbeat(deviceId: string): void {
-        if (this._devices[deviceId].device) {
-            this._devices[deviceId].device.lastHearbeat = moment().valueOf();;
+        // console.log(`${this.prefix} UpdateDeviceHeartbeat called with ${deviceId}`);
+        if (this._devices[deviceId]) {
+            this._devices[deviceId].device.lastHeartbeat = moment().valueOf();
         }
     }
 
     GetDevice(deviceId: string): Promise<Device | undefined> {
         return new Promise((resolve, reject) => {
-            resolve(this._devices[deviceId].device);
+            // console.log(`${this.prefix} GetDevice called for id ${deviceId}`);
+            const device = this._devices[deviceId]
+            if (device) {
+                // console.log(`   ${this.prefix} Got device! Returning...`);
+                resolve(device.device);
+            } else {
+                // console.log(`   ${this.prefix} Returning undefined...`);
+                resolve(undefined);
+            }
         });          
     }
 
@@ -37,6 +48,8 @@ export class RuntimeDeviceDBManager implements DeviceDBManager {
 
     GetDevices(): Promise<Device[]> {
         return new Promise((resolve, reject) => {
+            // console.log(`${this.prefix} GetDevices called. Current devices:`);
+            // console.log(this._devices);
             resolve(Object.values(this._devices).map(d => d.device));
         });
     }

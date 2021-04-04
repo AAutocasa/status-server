@@ -1,32 +1,43 @@
 const mqtt = require('mqtt');
+import e from "express";
 import { MQTTRouter, MQTTPublishOptions } from ".";
 
 export class MQTTManager {
+    readonly prefix = `[MQTTManager]`;
+
     constructor(router: MQTTRouter,
         host: string,
         username?: string,
         password?: string) { 
-            let options = undefined;
+            const hostWithProtocol = `mqtt://${host}`
 
             if (username || password) {
-                options = { username: username, password: password }
+                console.log(`${this.prefix} Connecting to host ${host} with username ${username} and password ${password}`);
+                this.mqttClient = mqtt.connect(hostWithProtocol, { username: username, password: password })
+            } else {
+                console.log(`${this.prefix} Connecting to host ${host} with no user info`);
+                this.mqttClient = mqtt.connect(hostWithProtocol)
             }
-
-            this.mqttClient = mqtt.connect(host, options)
             
             // Mqtt error calback
             this.mqttClient.on('error', (err: any) => {
-                console.log(`MQTT Error: ${err}`);
+                console.log(`${this.prefix} Error: ${err}`);
                 this.mqttClient.end();
             });
         
             // Connection callback
             this.mqttClient.on('connect', () => {
-                console.log(`MQTT client connected`);
+                console.log(`${this.prefix} Client connected!`);
+
+                // Subscribe to each route
+                router.routes.forEach(r => {
+                    console.log(`   ${this.prefix} Subscribing to ${r.topic}`);
+                    this.mqttClient.subscribe(r.topic, r.options);
+                })
             });
 
             this.mqttClient.on('close', () => {
-                console.log(`MQTT client disconnected`);
+                console.log(`${this.prefix} Client disconnected!`);
             });
         
             this.mqttClient.on('message', (topic: string, payload: any) => {
@@ -34,10 +45,6 @@ export class MQTTManager {
                 router.redirect(topic, payload);
             });
             
-            router.routes.forEach(r => {
-                this.mqttClient.subscribe(r.topic, r.options);
-            })
-        
         } 
 
     mqttClient: any

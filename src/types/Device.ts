@@ -4,7 +4,7 @@ export type Device = {
     status: DeviceStatus,
 
     /** UTC, ms */
-    lastHearbeat: number,
+    lastHeartbeat: number,
 };
 
 export enum DeviceStatus {
