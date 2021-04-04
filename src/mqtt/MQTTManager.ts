@@ -4,9 +4,15 @@ import { MQTTRouter, MQTTPublishOptions } from ".";
 export class MQTTManager {
     constructor(router: MQTTRouter,
         host: string,
-        username: string,
-        password: string) { 
-            this.mqttClient = mqtt.connect(host, { username: username, password: password })
+        username?: string,
+        password?: string) { 
+            let options = undefined;
+
+            if (username || password) {
+                options = { username: username, password: password }
+            }
+
+            this.mqttClient = mqtt.connect(host, options)
             
             // Mqtt error calback
             this.mqttClient.on('error', (err: any) => {

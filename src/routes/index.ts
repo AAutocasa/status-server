@@ -1,5 +1,7 @@
 import { DeviceRouter } from "./devices.routes";
+import { DeviceMQTT } from './devices.mqtt';
 
 export {
-    DeviceRouter
+    DeviceRouter,
+    DeviceMQTT
 }
