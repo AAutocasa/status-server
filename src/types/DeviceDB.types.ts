@@ -1,4 +1,4 @@
-import { Device } from './Device';
+import { Device } from './Device.types';
 
 export interface DeviceDBManager {
     UpdateDeviceHeartbeat(deviceId: string): void;

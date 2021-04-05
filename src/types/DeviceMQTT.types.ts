@@ -1,4 +1,4 @@
-import { DeviceStatus } from "./Device";
+import { DeviceStatus } from "./Device.types";
 
 export type Heartbeat = {
     deviceId: string,

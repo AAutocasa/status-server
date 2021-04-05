@@ -1,3 +1,5 @@
+import { MQTTManager } from ".";
+
 export type MQTTPublishOptions = {
     /** At most once (0)
         At least once (1)
@@ -23,3 +25,14 @@ export type MQTTRedirection = {
     options: MQTTSubscriptionOptions,
     redirection: (payload: any) => void
 };
+
+export interface MQTTPublisher {
+    publish(topic: string, payload: string, options: MQTTPublishOptions): void;
+    publishJSON(topic: string, payload: Record<string, any>, options: MQTTPublishOptions): void;
+}
+
+/** The publisher delegate relays messages  */
+export interface MQTTPublisherDelegate extends MQTTPublisher {
+    _mqttManager?: MQTTPublisher;
+    mqttManager: MQTTPublisher;
+}

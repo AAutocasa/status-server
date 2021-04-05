@@ -1,4 +1,4 @@
-import { DeviceService } from './DeviceService';
+import { DeviceService } from './DeviceService.service';
 
 export {
     DeviceService

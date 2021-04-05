@@ -25,13 +25,10 @@ export class RuntimeDeviceDBManager implements DeviceDBManager {
 
     GetDevice(deviceId: string): Promise<Device | undefined> {
         return new Promise((resolve, reject) => {
-            // console.log(`${this.prefix} GetDevice called for id ${deviceId}`);
             const device = this._devices[deviceId]
             if (device) {
-                // console.log(`   ${this.prefix} Got device! Returning...`);
                 resolve(device.device);
             } else {
-                // console.log(`   ${this.prefix} Returning undefined...`);
                 resolve(undefined);
             }
         });          

@@ -1,6 +1,6 @@
-import { Device, DeviceStatus } from './Device';
-import { DeviceDBManager } from './DeviceDB';
-import { Heartbeat } from './DeviceMQTT';
+import { Device, DeviceStatus } from './Device.types';
+import { DeviceDBManager } from './DeviceDB.types';
+import { Heartbeat } from './DeviceMQTT.types';
 
 export {
     Device,

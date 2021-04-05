@@ -30,6 +30,28 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         }
     })
 
+    router.get('/devices/:deviceId/activate', async (req: Request, res: Response) => {
+        console.log(`${prefix} '/devices/:deviceId/activate' called...`);
+        try {
+            const id = req.params["deviceId"];
+            await deviceSvc.ActivateDevice(id);
+            res.status(200).send();
+        } catch (error) {
+            res.status(500).send({err: error});
+        }
+    })
+
+    router.get('/devices/:deviceId/deactivate', async (req: Request, res: Response) => {
+        console.log(`${prefix} '/devices/:deviceId/deactivate' called...`);
+        try {
+            const id = req.params["deviceId"];
+            await deviceSvc.DeactivateDevice(id);
+            res.status(200).send();
+        } catch (error) {
+            res.status(500).send({err: error});
+        }
+    })
+
     router.get('/devices/:type', async (req: Request, res: Response) => {
         console.log(`${prefix} '/devices/:type' called...`);
         try {
