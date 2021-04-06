@@ -1,3 +1,5 @@
+import { FirmwareType, FirmwareRole } from './Firmware.types';
+
 export type Device = {
     /* ======= Immutable properties (from the server-side) */
     /** Device ID, set on the device */
@@ -7,7 +9,7 @@ export type Device = {
     type: string,
 
     /** Current applied firmware (RGB_STRIPE, RGB_MATRIX, COFFEE_POT) */
-    firmwareType: string,
+    firmwareType: FirmwareType,
 
     /** Device ID, set on the device (v1.2) */
     firmwareVersion: string,
@@ -25,6 +27,9 @@ export type Device = {
     /* ======= Mutable properties that are set to the device */
     /** Active or inactive */
     status: DeviceStatus,
+
+    /** Role of the device, needs to be allowed by the firmware */
+    role?: FirmwareRole,
 
     /* ======= Other */
     /** Last time device pinged the server. UTC, ms */

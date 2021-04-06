@@ -4,11 +4,13 @@ import { DeviceService } from "../services";
 export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => {
     const prefix = `[DeviceRouter]`;
 
+    /** Hey! */
     router.get('/', (req: Request, res: Response) => {
         console.log(`${prefix} '/' called...`);
         res.status(200).send('Hey!');
     })
 
+    /** [GET] Get all devices! */
     router.get('/devices', async (req: Request, res: Response) => {
         console.log(`${prefix} '/devices' called...`);
         try {
@@ -19,6 +21,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         }
     })
 
+    /** [GET] Get a device with a specific ID */
     router.get('/devices/:deviceId', async (req: Request, res: Response) => {
         console.log(`${prefix} '/devices/:deviceId' called...`);
         try {
@@ -30,6 +33,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         }
     })
 
+    /** [GET] Activate a device with a specific ID */
     router.get('/devices/:deviceId/activate', async (req: Request, res: Response) => {
         console.log(`${prefix} '/devices/:deviceId/activate' called...`);
         try {
@@ -41,6 +45,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         }
     })
 
+    /** [GET] Deactivate a device with a specific ID */
     router.get('/devices/:deviceId/deactivate', async (req: Request, res: Response) => {
         console.log(`${prefix} '/devices/:deviceId/deactivate' called...`);
         try {
@@ -52,6 +57,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         }
     })
 
+    /** [GET] Get all devices with type */
     router.get('/devices/:type', async (req: Request, res: Response) => {
         console.log(`${prefix} '/devices/:type' called...`);
         try {
