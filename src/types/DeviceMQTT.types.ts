@@ -1,7 +1,3 @@
-import { DeviceStatus } from "./Device.types";
+import { Device } from ".";
 
-export type Heartbeat = {
-    deviceId: string,
-    deviceType: string,
-    status: DeviceStatus,
-}
+export type Heartbeat = Pick<Device, "id" | "type" | "firmwareType" | "firmwareVersion" | "status">;

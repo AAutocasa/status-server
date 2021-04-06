@@ -20,7 +20,7 @@ export class MQTTRouter {
     }
 
     private _checkTopicMatch(topic: string, redirection: MQTTRedirection): boolean {
-        // Can be improved to use wildcards
+        // NOTE: Can be improved to use wildcards
         return topic == redirection.topic
     }
 

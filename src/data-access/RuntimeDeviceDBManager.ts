@@ -9,18 +9,11 @@ export class RuntimeDeviceDBManager implements DeviceDBManager {
     UpdateDevice(device: Device): void {
         // console.log(`${this.prefix} UpdateDevice called with:`);
         // console.log(device);
-        this._devices[device.deviceId] = { device };
+        this._devices[device.id] = { device };
     }
 
     RemoveDevice(deviceId: string): void {
         delete this._devices[deviceId];
-    }
-
-    UpdateDeviceHeartbeat(deviceId: string): void {
-        // console.log(`${this.prefix} UpdateDeviceHeartbeat called with ${deviceId}`);
-        if (this._devices[deviceId]) {
-            this._devices[deviceId].device.lastHeartbeat = moment().valueOf();
-        }
     }
 
     GetDevice(deviceId: string): Promise<Device | undefined> {
@@ -38,7 +31,7 @@ export class RuntimeDeviceDBManager implements DeviceDBManager {
         return new Promise((resolve, reject) => {
             const array = Object.values(this._devices)
                                 .map(d => d.device)
-                                .filter(d => d.deviceType == type);
+                                .filter(d => d.type == type);
             resolve(array);
         });          
     }

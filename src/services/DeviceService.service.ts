@@ -1,5 +1,6 @@
-import { MQTTPublisher, MQTTPublishOptions } from '../mqtt';
+import { MQTTPublisher, MQTTQoS } from '../mqtt';
 import { Device, DeviceDBManager, DeviceStatus, Heartbeat } from '../types';
+import moment from 'moment';
 export class DeviceService {
     readonly prefix = `[DeviceService]`;
 
@@ -23,21 +24,26 @@ export class DeviceService {
         }
     }
 
-    public async TriggerHeartbeat(heartbeat: Heartbeat) {
+    public async ProcessHeartbeat(heartbeat: Heartbeat) {
         try {
             // console.log(`${this.prefix} TriggerHeartbeat called with ${heartbeat.deviceId}`);
-            const existingDevice = await this.GetDevice(heartbeat.deviceId);
+            const existingDevice = await this.GetDevice(heartbeat.id);
 
-            if (!existingDevice) {
-                // console.log(`${this.prefix} No device... creating it!`);
-                const newDevice = Object.assign(heartbeat, { lastHeartbeat: 0 })
-                await this.UpdateDevice(newDevice)
-                await this.deviceDb.UpdateDeviceHeartbeat(heartbeat.deviceId);
-            } else {
+            if (existingDevice) {
                 // console.log(`${this.prefix} Device already exists. Updating heartbeat`);
-                const updatedDevice = Object.assign(existingDevice, { deviceType: heartbeat.deviceType, status: heartbeat.status });
+                const updatedDevice = Object.assign(existingDevice, 
+                    { 
+                        type: heartbeat.type, 
+                        firmwareType: heartbeat.firmwareType,
+                        firmwareVersion: heartbeat.firmwareVersion,
+                        status: heartbeat.status ,
+                        lastHeartbeat: moment().valueOf()
+                    });
                 await this.UpdateDevice(updatedDevice)
-                await this.deviceDb.UpdateDeviceHeartbeat(heartbeat.deviceId);
+            } else {
+                // console.log(`${this.prefix} No device... creating it!`);
+                const newDevice = Object.assign(heartbeat, { lastHeartbeat: moment().valueOf() })
+                await this.UpdateDevice(newDevice)
             }
         } catch (error) {
             throw error;
@@ -68,7 +74,7 @@ export class DeviceService {
                 device.status = DeviceStatus.Unknown;
                 this.deviceDb.UpdateDevice(device);
                 console.log(`   ${this.prefix} Publishing to mqtt!`);
-                this.mqttPublisher.publishJSON(`status-device/deactivate`, { deviceId: deviceId }, { qos: 2 });
+                this.mqttPublisher.publishJSON(`status-device/activate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE });
             }
         } catch (error) {
             throw error;
@@ -83,7 +89,7 @@ export class DeviceService {
                 device.status = DeviceStatus.Unknown;
                 this.deviceDb.UpdateDevice(device);
                 console.log(`   ${this.prefix} Publishing to mqtt!`);
-                this.mqttPublisher.publishJSON(`status-device/deactivate`, { deviceId: deviceId }, { qos: 2 });
+                this.mqttPublisher.publishJSON(`status-device/deactivate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE });
             }
         } catch (error) {
             throw error;
