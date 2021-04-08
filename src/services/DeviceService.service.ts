@@ -1,11 +1,13 @@
 import { MQTTPublisher, MQTTQoS } from '../mqtt';
-import { Device, DeviceDBManager, DeviceStatus, Heartbeat } from '../types';
+import { Device, DeviceDBManager, DeviceStatus, FirmwareRole, Heartbeat } from '../types';
+import { FirmwareService } from '.';
 import moment from 'moment';
 export class DeviceService {
     readonly prefix = `[DeviceService]`;
 
     constructor(private deviceDb: DeviceDBManager,
-                private mqttPublisher: MQTTPublisher) { }
+                private mqttPublisher: MQTTPublisher,
+                private firmwareSvc: FirmwareService) { }
 
     public async GetDevice(deviceId: string): Promise<Device | undefined> {
         try {
@@ -91,6 +93,32 @@ export class DeviceService {
                 console.log(`   ${this.prefix} Publishing to mqtt!`);
                 this.mqttPublisher.publishJSON(`status-device/deactivate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE });
             }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    public async SetDeviceRole(deviceId: string, role: FirmwareRole) {
+        try {
+            console.log(`${this.prefix} SetDeviceRole called with id ${deviceId}, role ${role}`);
+            const device = await this.deviceDb.GetDevice(deviceId);
+
+            if (!device) {
+                throw new Error(`Device doesn't exist`);
+            }
+
+            const firmware = device.firmwareType;
+            const isValid = await this.firmwareSvc.ValidateFirmwareRole(firmware, role)
+
+            if (!isValid) {
+                throw new Error(`Role is invalid`);
+            }
+
+            const updatedDevice = Object.assign(device, { role: role })
+            this.deviceDb.UpdateDevice(updatedDevice);
+
+            console.log(`   ${this.prefix} Publishing to mqtt!`);
+            this.mqttPublisher.publishJSON(`status-device/firmware-role`, { deviceId: deviceId, role: role }, { qos: MQTTQoS.AT_LEAST_ONCE });
         } catch (error) {
             throw error;
         }
