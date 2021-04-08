@@ -114,12 +114,15 @@ export class DeviceService {
                 return false
             }
 
+            console.log(role);
+            console.log(typeof role);
+            
             const updatedDevice = Object.assign(device, { role: role })
             this.deviceDb.UpdateDevice(updatedDevice);
 
             console.log(`   ${this.prefix} Publishing to mqtt!`);
             this.mqttPublisher.publishJSON(`status-device/firmware-role`, { deviceId: deviceId, role: role }, { qos: MQTTQoS.AT_LEAST_ONCE });
-            
+
             return true;
         } catch (error) {
             throw error;

@@ -7,7 +7,7 @@ export class FirmwareService {
 
     public async ValidateFirmwareRole(type: FirmwareType, role: FirmwareRole) {
         const roles = await this.firmwareDb.GetRoles(type);
-        return roles.includes(role)
+        return roles.filter(r => r == role).length != 0; 
     }
 
 }

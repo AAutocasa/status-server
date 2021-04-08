@@ -71,7 +71,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
     })
 
     /** [POST] Sets a role to a device */
-    router.get('/devices/set-role', async (req: Request, res: Response) => {
+    router.post('/devices/set-role', async (req: Request, res: Response) => {
         console.log(`${prefix} '/devices/set-role' called...`);
         try {
             const assignment = <RoleAssignment>req.body;
@@ -80,6 +80,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
                 return;
             }
 
+            // TODO: Figure out why the fuck the type of role is string
             const result = await deviceSvc.SetDeviceRole(assignment.id, assignment.role);
             res.status(200).send(result);
         } catch (error) {
