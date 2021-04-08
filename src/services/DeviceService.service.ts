@@ -111,7 +111,7 @@ export class DeviceService {
             const isValid = await this.firmwareSvc.ValidateFirmwareRole(firmware, role)
 
             if (!isValid) {
-                throw new Error(`Role is invalid`);
+                return false
             }
 
             const updatedDevice = Object.assign(device, { role: role })
@@ -119,6 +119,8 @@ export class DeviceService {
 
             console.log(`   ${this.prefix} Publishing to mqtt!`);
             this.mqttPublisher.publishJSON(`status-device/firmware-role`, { deviceId: deviceId, role: role }, { qos: MQTTQoS.AT_LEAST_ONCE });
+            
+            return true;
         } catch (error) {
             throw error;
         }

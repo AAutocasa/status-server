@@ -1,5 +1,6 @@
 import { Request, Router, Response } from "express";
 import { DeviceService } from "../services";
+import { RoleAssignment } from "../types";
 
 export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => {
     const prefix = `[DeviceRouter]`;
@@ -64,6 +65,23 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
             const type = req.params["type"];
             const device = await deviceSvc.GetDevicesByType(type);
             res.status(200).send(device);
+        } catch (error) {
+            res.status(500).send({err: error});
+        }
+    })
+
+    /** [POST] Sets a role to a device */
+    router.get('/devices/set-role', async (req: Request, res: Response) => {
+        console.log(`${prefix} '/devices/set-role' called...`);
+        try {
+            const assignment = <RoleAssignment>req.body;
+            if (!assignment.role) {
+                res.status(400).send(`ERR: No role information found`);
+                return;
+            }
+
+            const result = await deviceSvc.SetDeviceRole(assignment.id, assignment.role);
+            res.status(200).send(result);
         } catch (error) {
             res.status(500).send({err: error});
         }

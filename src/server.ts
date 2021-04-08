@@ -2,8 +2,8 @@ import express from 'express'
 import dotenv from 'dotenv'
 
 import { DeviceRouter, DeviceMQTT } from './routes';
-import { DeviceService } from './services';
-import { RuntimeDeviceDBManager } from './data-access';
+import { DeviceService, FirmwareService } from './services';
+import { RuntimeDeviceDBManager, StaticFirmwareDBManager } from './data-access';
 import { MQTTManager, MQTTRouter, MQTTDefaultPublisherDelegate } from './mqtt';
 
 dotenv.config();
@@ -20,7 +20,8 @@ app.use('/', router);
 const publisher = new MQTTDefaultPublisherDelegate()
 
 // Services setup
-const deviceSvc = new DeviceService(new RuntimeDeviceDBManager(), publisher);
+const firmwareSvc = new FirmwareService(new StaticFirmwareDBManager())
+const deviceSvc = new DeviceService(new RuntimeDeviceDBManager(), publisher, firmwareSvc);
 
 // HTTP Routes setup
 DeviceRouter(router, deviceSvc);
