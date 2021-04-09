@@ -26,6 +26,14 @@ export class DeviceService {
         }
     }
 
+    public async DeleteDevice(deviceId: string) {
+        try {
+            await this.deviceDb.RemoveDevice(deviceId);
+        } catch (error) {
+            throw error;
+        }
+    }
+
     public async ProcessHeartbeat(heartbeat: DeviceHeartbeat) {
         try {
             // console.log(`${this.prefix} TriggerHeartbeat called with ${heartbeat.deviceId}`);
@@ -136,12 +144,12 @@ export class DeviceService {
     }
 
 
-    public async SetDeviceInfo(info: DeviceInfo) {
+    public async SetDeviceInfo(deviceId: string, info: DeviceInfo) {
         try {
-            console.log(`${this.prefix} SetDeviceInfo called with id ${info.id}, info: `);
+            console.log(`${this.prefix} SetDeviceInfo called with id ${deviceId}, info: `);
             console.log(info);
 
-            const device = await this.deviceDb.GetDevice(info.id);
+            const device = await this.deviceDb.GetDevice(deviceId);
 
             if (!device) {
                 throw new Error(`Device doesn't exist`);

@@ -1,19 +1,52 @@
-import moment from 'moment';
-import { Device, DeviceDBManager } from '../types';
+import { Device, DeviceDBManager } from '../../types';
+const fs = require('fs');
+const fse = require('fs-extra');
 
-export class RuntimeDeviceDBManager implements DeviceDBManager {
-    readonly prefix = `[RuntimeDeviceDBManager]`;
 
+export class FileDeviceDBManager implements DeviceDBManager {
+    readonly prefix = `[FileDeviceDBManager]`;
+
+    constructor(filePath: string) {
+        this._filePath = filePath;
+        this.ReadDB(filePath);
+    }
+
+    private _filePath: string
     private _devices: { [deviceId: string]: { device: Device } } = {};
+
+    private ReadDB(filePath: string) {
+        const prefix = this.prefix
+
+        fse.readJson(filePath, (err: any, data: any) => {
+            if (err) { 
+                console.log(`${prefix} ReadDB error: ${err}. Creating file...!`);
+                this.PersistDB(filePath);
+                console.log(`${prefix} Created file...!`);
+            }
+            this._devices = data;
+        })
+    }
+
+    private PersistDB(filePath: string) {
+        const prefix = this.prefix
+
+        fse.writeJson(filePath, this._devices, (err: any) => {
+            if (err) {
+                return console.log(`${prefix} PersistDB error: ${err}`);
+            }
+        })
+    }
 
     UpdateDevice(device: Device): void {
         // console.log(`${this.prefix} UpdateDevice called with:`);
         // console.log(device);
         this._devices[device.id] = { device };
+        this.PersistDB(this._filePath);
     }
 
     RemoveDevice(deviceId: string): void {
         delete this._devices[deviceId];
+        this.PersistDB(this._filePath);
     }
 
     GetDevice(deviceId: string): Promise<Device | undefined> {

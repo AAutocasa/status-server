@@ -7,13 +7,13 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
 
     /** Hey! */
     router.get('/', (req: Request, res: Response) => {
-        console.log(`${prefix} '/' called...`);
+        console.log(`${prefix} [GET] '/' called...`);
         res.status(200).send('Hey!');
     })
 
     /** [GET] Get all devices! */
     router.get('/devices', async (req: Request, res: Response) => {
-        console.log(`${prefix} '/devices' called...`);
+        console.log(`${prefix} [GET] '/devices' called...`);
         try {
             const devices = await deviceSvc.GetAllDevices();
             res.status(200).send(devices);
@@ -24,7 +24,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
 
     /** [GET] Get a device with a specific ID */
     router.get('/devices/:deviceId', async (req: Request, res: Response) => {
-        console.log(`${prefix} '/devices/:deviceId' called...`);
+        console.log(`${prefix} [GET] '/devices/:deviceId' called...`);
         try {
             const id = req.params["deviceId"];
             const device = await deviceSvc.GetDevice(id);
@@ -34,9 +34,9 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         }
     })
 
-    /** [GET] Activate a device with a specific ID */
-    router.get('/devices/:deviceId/activate', async (req: Request, res: Response) => {
-        console.log(`${prefix} '/devices/:deviceId/activate' called...`);
+    /** [PUT] Activate a device with a specific ID */
+    router.put('/devices/:deviceId/activate', async (req: Request, res: Response) => {
+        console.log(`${prefix} [PUT] '/devices/:deviceId/activate' called...`);
         try {
             const id = req.params["deviceId"];
             await deviceSvc.ActivateDevice(id);
@@ -46,9 +46,9 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         }
     })
 
-    /** [GET] Deactivate a device with a specific ID */
-    router.get('/devices/:deviceId/deactivate', async (req: Request, res: Response) => {
-        console.log(`${prefix} '/devices/:deviceId/deactivate' called...`);
+    /** [PUT] Deactivate a device with a specific ID */
+    router.put('/devices/:deviceId/deactivate', async (req: Request, res: Response) => {
+        console.log(`${prefix} [PUT] '/devices/:deviceId/deactivate' called...`);
         try {
             const id = req.params["deviceId"];
             await deviceSvc.DeactivateDevice(id);
@@ -60,7 +60,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
 
     /** [GET] Get all devices with type */
     router.get('/devices/:type', async (req: Request, res: Response) => {
-        console.log(`${prefix} '/devices/:type' called...`);
+        console.log(`${prefix} [GET] '/devices/:type' called...`);
         try {
             const type = req.params["type"];
             const device = await deviceSvc.GetDevicesByType(type);
@@ -70,10 +70,11 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         }
     })
 
-    /** [POST] Sets a role to a device */
-    router.post('/devices/set-role', async (req: Request, res: Response) => {
-        console.log(`${prefix} '/devices/set-role' called...`);
+    /** [PUT] Sets a role to a device */
+    router.put('/devices/:deviceId/role', async (req: Request, res: Response) => {
+        console.log(`${prefix} [PUT] '/devices/:deviceId/set-role' called...`);
         try {
+            const id = req.params["deviceId"];
             const assignment = <DeviceRoleAssignment>req.body;
             if (!assignment.role) {
                 res.status(400).send(`ERR: No role information found`);
@@ -81,19 +82,32 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
             }
 
             // TODO: Figure out why the fuck the type of role is string
-            const result = await deviceSvc.SetDeviceRole(assignment.id, assignment.role);
+            const result = await deviceSvc.SetDeviceRole(id, assignment.role);
             res.status(200).send(result);
         } catch (error) {
             res.status(500).send({err: error});
         }
     })
 
-    /** [POST] Sets naming infos to a device */
-    router.post('/devices/set-infos', async (req: Request, res: Response) => {
-        console.log(`${prefix} '/devices/set-infos' called...`);
+    /** [PUT] Sets naming infos to a device */
+    router.put('/devices/:deviceId/infos', async (req: Request, res: Response) => {
+        console.log(`${prefix} [PUT] '/devices/:deviceId/set-infos' called...`);
         try {
+            const id = req.params["deviceId"];
             const info = <DeviceInfo>req.body;
-            await deviceSvc.SetDeviceInfo(info);
+            await deviceSvc.SetDeviceInfo(id, info);
+            res.status(200).send();
+        } catch (error) {
+            res.status(500).send({err: error});
+        }
+    })
+
+    /** [DELETE] Deletes a device */
+    router.delete('/devices/:deviceId', async (req: Request, res: Response) => {
+        console.log(`${prefix} [DELETE] '/devices/:deviceId/' called...`);
+        try {
+            const id = req.params["deviceId"];
+            await deviceSvc.DeleteDevice(id);
             res.status(200).send();
         } catch (error) {
             res.status(500).send({err: error});

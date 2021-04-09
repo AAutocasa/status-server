@@ -5,6 +5,7 @@ import { DeviceRouter, DeviceMQTT } from './routes';
 import { DeviceService, FirmwareService } from './services';
 import { RuntimeDeviceDBManager, StaticFirmwareDBManager } from './data-access';
 import { MQTTManager, MQTTRouter, MQTTDefaultPublisherDelegate } from './mqtt';
+import { FileDeviceDBManager } from './data-access/DeviceDB/FileDeviceDBManager';
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ const publisher = new MQTTDefaultPublisherDelegate()
 
 // Services setup
 const firmwareSvc = new FirmwareService(new StaticFirmwareDBManager())
-const deviceSvc = new DeviceService(new RuntimeDeviceDBManager(), publisher, firmwareSvc);
+const deviceSvc = new DeviceService(new FileDeviceDBManager(`./data/devices.json`), publisher, firmwareSvc);
 
 // HTTP Routes setup
 DeviceRouter(router, deviceSvc);
