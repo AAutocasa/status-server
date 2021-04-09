@@ -1,5 +1,5 @@
 import { MQTTPublisher, MQTTQoS } from '../mqtt';
-import { Device, DeviceDBManager, DeviceStatus, FirmwareRole, Heartbeat } from '../types';
+import { Device, DeviceDBManager, DeviceStatus, FirmwareRole, DeviceHeartbeat, DeviceInfo } from '../types';
 import { FirmwareService } from '.';
 import moment from 'moment';
 export class DeviceService {
@@ -26,7 +26,7 @@ export class DeviceService {
         }
     }
 
-    public async ProcessHeartbeat(heartbeat: Heartbeat) {
+    public async ProcessHeartbeat(heartbeat: DeviceHeartbeat) {
         try {
             // console.log(`${this.prefix} TriggerHeartbeat called with ${heartbeat.deviceId}`);
             const existingDevice = await this.GetDevice(heartbeat.id);
@@ -72,12 +72,15 @@ export class DeviceService {
         try {
             console.log(`${this.prefix} Activate called with id ${deviceId}`);
             const device = await this.deviceDb.GetDevice(deviceId);
-            if (device) {
-                device.status = DeviceStatus.Unknown;
-                this.deviceDb.UpdateDevice(device);
-                console.log(`   ${this.prefix} Publishing to mqtt!`);
-                this.mqttPublisher.publishJSON(`status-device/activate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE });
+
+            if (!device) {
+                throw new Error(`Device doesn't exist`);
             }
+
+            device.status = DeviceStatus.Unknown;
+            this.deviceDb.UpdateDevice(device);
+            console.log(`   ${this.prefix} Publishing to mqtt!`);
+            this.mqttPublisher.publishJSON(`status-device/activate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE }); 
         } catch (error) {
             throw error;
         }
@@ -87,12 +90,15 @@ export class DeviceService {
         try {
             console.log(`${this.prefix} Deactivate called with id ${deviceId}`);
             const device = await this.deviceDb.GetDevice(deviceId);
-            if (device) {
-                device.status = DeviceStatus.Unknown;
-                this.deviceDb.UpdateDevice(device);
-                console.log(`   ${this.prefix} Publishing to mqtt!`);
-                this.mqttPublisher.publishJSON(`status-device/deactivate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE });
+
+            if (!device) {
+                throw new Error(`Device doesn't exist`);
             }
+
+            device.status = DeviceStatus.Unknown;
+            this.deviceDb.UpdateDevice(device);
+            console.log(`   ${this.prefix} Publishing to mqtt!`);
+            this.mqttPublisher.publishJSON(`status-device/deactivate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE });       
         } catch (error) {
             throw error;
         }
@@ -117,13 +123,48 @@ export class DeviceService {
             console.log(role);
             console.log(typeof role);
             
-            const updatedDevice = Object.assign(device, { role: role })
+            const updatedDevice = Object.assign(device, { role })
             this.deviceDb.UpdateDevice(updatedDevice);
 
             console.log(`   ${this.prefix} Publishing to mqtt!`);
             this.mqttPublisher.publishJSON(`status-device/firmware-role`, { deviceId: deviceId, role: role }, { qos: MQTTQoS.AT_LEAST_ONCE });
 
             return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+    public async SetDeviceInfo(info: DeviceInfo) {
+        try {
+            console.log(`${this.prefix} SetDeviceInfo called with id ${info.id}, info: `);
+            console.log(info);
+
+            const device = await this.deviceDb.GetDevice(info.id);
+
+            if (!device) {
+                throw new Error(`Device doesn't exist`);
+            }
+
+            let updatedDevice = device;
+
+            const tag = info.tag
+            if (tag) {
+                Object.assign(device, { tag })
+            }
+
+            const location = info.location
+            if (location) {
+                Object.assign(device, { location })
+            }
+
+            const group = info.group
+            if (group) {
+                Object.assign(device, { group })
+            }
+            
+            this.deviceDb.UpdateDevice(updatedDevice);
         } catch (error) {
             throw error;
         }

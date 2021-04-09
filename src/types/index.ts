@@ -1,6 +1,6 @@
 import { Device, DeviceStatus } from './Device.types';
 import { DeviceDBManager } from './DeviceDB.types';
-import { Heartbeat, RoleAssignment } from './DeviceMQTT.types';
+import { DeviceHeartbeat, DeviceRoleAssignment, DeviceInfo } from './DeviceRoutes.types';
 import { FirmwareRole, FirmwareType } from './Firmware.types';
 import { FirmwareDBManager } from './FirmwareDB.types';
 
@@ -9,8 +9,9 @@ export {
     DeviceStatus,
     DeviceDBManager,
 
-    Heartbeat,
-    RoleAssignment,
+    DeviceHeartbeat,
+    DeviceRoleAssignment,
+    DeviceInfo,
 
     FirmwareRole,
     FirmwareType,

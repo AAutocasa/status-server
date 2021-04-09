@@ -1,6 +1,6 @@
 import { MQTTQoS, MQTTRouter, MQTTSubscriptionOptions } from "../mqtt";
 import { DeviceService } from "../services";
-import { Heartbeat } from "../types";
+import { DeviceHeartbeat } from "../types";
 
 export const DeviceMQTT = (router: MQTTRouter, deviceSvc: DeviceService): void => {
     const prefix = `[DeviceMQTT]`;
@@ -10,7 +10,7 @@ export const DeviceMQTT = (router: MQTTRouter, deviceSvc: DeviceService): void =
                     (payload) => {
         // Use Heartbeat to log device tick on the service
         console.log(`${prefix} Topic 'status/heartbeat' called with payload ${payload}`);
-        const heartbeat = <Heartbeat>JSON.parse(payload);
+        const heartbeat = <DeviceHeartbeat>JSON.parse(payload);
         deviceSvc.ProcessHeartbeat(heartbeat);
     })
 

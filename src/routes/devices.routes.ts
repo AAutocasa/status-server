@@ -1,6 +1,6 @@
 import { Request, Router, Response } from "express";
 import { DeviceService } from "../services";
-import { RoleAssignment } from "../types";
+import { DeviceInfo, DeviceRoleAssignment } from "../types";
 
 export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => {
     const prefix = `[DeviceRouter]`;
@@ -74,7 +74,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
     router.post('/devices/set-role', async (req: Request, res: Response) => {
         console.log(`${prefix} '/devices/set-role' called...`);
         try {
-            const assignment = <RoleAssignment>req.body;
+            const assignment = <DeviceRoleAssignment>req.body;
             if (!assignment.role) {
                 res.status(400).send(`ERR: No role information found`);
                 return;
@@ -83,6 +83,18 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
             // TODO: Figure out why the fuck the type of role is string
             const result = await deviceSvc.SetDeviceRole(assignment.id, assignment.role);
             res.status(200).send(result);
+        } catch (error) {
+            res.status(500).send({err: error});
+        }
+    })
+
+    /** [POST] Sets naming infos to a device */
+    router.post('/devices/set-infos', async (req: Request, res: Response) => {
+        console.log(`${prefix} '/devices/set-infos' called...`);
+        try {
+            const info = <DeviceInfo>req.body;
+            await deviceSvc.SetDeviceInfo(info);
+            res.status(200).send();
         } catch (error) {
             res.status(500).send({err: error});
         }
