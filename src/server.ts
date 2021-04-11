@@ -6,11 +6,16 @@ import { DeviceService, FirmwareService } from './services';
 import { RuntimeDeviceDBManager, StaticFirmwareDBManager } from './data-access';
 import { MQTTManager, MQTTRouter, MQTTDefaultPublisherDelegate } from './mqtt';
 import { FileDeviceDBManager } from './data-access/DeviceDB/FileDeviceDBManager';
+import { AuthMiddleware, LoggerMiddleware } from './middlewares';
 
 dotenv.config();
 
 const app = express();
 const router = express.Router();
+
+// Setup middlewares
+app.use(AuthMiddleware([process.env.API_KEY]))
+app.use(LoggerMiddleware())
 
 // Server setup
 app.use(express.json());
