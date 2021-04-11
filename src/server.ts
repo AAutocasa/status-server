@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 
 import { DeviceRouter, DeviceMQTT } from './routes';
 import { DeviceService, FirmwareService } from './services';
-import { RuntimeDeviceDBManager, StaticFirmwareDBManager } from './data-access';
+import { StaticFirmwareDBManager } from './data-access';
 import { MQTTManager, MQTTRouter, MQTTDefaultPublisherDelegate } from './mqtt';
 import { FileDeviceDBManager } from './data-access/DeviceDB/FileDeviceDBManager';
 import { AuthMiddleware, LoggerMiddleware } from './middlewares';

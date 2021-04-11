@@ -20,7 +20,7 @@ export class MQTTDefaultPublisherDelegate implements MQTTPublisherDelegate {
         }
     }
 
-    publishJSON(topic: string, payload: Record<string, any>, options: MQTTPublishOptions) {
+    publishJSON(topic: string, payload: Record<string, any>, options: MQTTPublishOptions): void {
         this.publish(topic, JSON.stringify(payload), options);
     }
     

@@ -1,6 +1,5 @@
 import { Device, DeviceDBManager } from '../../types';
-const fs = require('fs');
-const fse = require('fs-extra');
+import fse from 'fs-extra';
 
 
 export class FileDeviceDBManager implements DeviceDBManager {

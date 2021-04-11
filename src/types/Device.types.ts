@@ -40,4 +40,4 @@ export enum DeviceStatus {
     Unknown = -1,
     Active = 0,
     Inactive = 1
-};
+}

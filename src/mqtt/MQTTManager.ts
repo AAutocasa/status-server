@@ -1,6 +1,5 @@
-const mqtt = require('mqtt');
-import e from "express";
-import { MQTTRouter, MQTTPublishOptions, MQTTPublisher, MQTTPublisherDelegate } from ".";
+import mqtt from 'mqtt';
+import { MQTTRouter, MQTTPublishOptions, MQTTPublisher } from ".";
 
 export class MQTTManager implements MQTTPublisher {
     readonly prefix = `[MQTTManager]`;
@@ -49,13 +48,13 @@ export class MQTTManager implements MQTTPublisher {
 
     mqttClient: any
 
-    publish(topic: string, payload: string, options: MQTTPublishOptions) {
+    publish(topic: string, payload: string, options: MQTTPublishOptions): void {
         console.log(`   ${this.prefix} Publish called to topic ${topic}. Payload ${payload} and options:`);
         console.log(options);
         this.mqttClient.publish(topic, payload.toString(), options)
     }
 
-    publishJSON(topic: string, payload: Record<string, any>, options: MQTTPublishOptions) {
+    publishJSON(topic: string, payload: Record<string, any>, options: MQTTPublishOptions): void {
         this.publish(topic, JSON.stringify(payload), options);
     }
 }

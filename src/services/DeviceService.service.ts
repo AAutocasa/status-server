@@ -18,7 +18,7 @@ export class DeviceService {
         }
     }
 
-    public async UpdateDevice(device: Device) {
+    public async UpdateDevice(device: Device): Promise<void> {
         try {
             await this.deviceDb.UpdateDevice(device);
         } catch (error) {
@@ -26,7 +26,7 @@ export class DeviceService {
         }
     }
 
-    public async DeleteDevice(deviceId: string) {
+    public async DeleteDevice(deviceId: string): Promise<void> {
         try {
             await this.deviceDb.RemoveDevice(deviceId);
         } catch (error) {
@@ -34,7 +34,7 @@ export class DeviceService {
         }
     }
 
-    public async ProcessHeartbeat(heartbeat: DeviceHeartbeat) {
+    public async ProcessHeartbeat(heartbeat: DeviceHeartbeat): Promise<void> {
         try {
             // console.log(`${this.prefix} TriggerHeartbeat called with ${heartbeat.deviceId}`);
             const existingDevice = await this.GetDevice(heartbeat.id);
@@ -76,7 +76,7 @@ export class DeviceService {
         }
     }
 
-    public async ActivateDevice(deviceId: string) {
+    public async ActivateDevice(deviceId: string): Promise<void> {
         try {
             console.log(`${this.prefix} Activate called with id ${deviceId}`);
             const device = await this.deviceDb.GetDevice(deviceId);
@@ -94,7 +94,7 @@ export class DeviceService {
         }
     }
 
-    public async DeactivateDevice(deviceId: string) {
+    public async DeactivateDevice(deviceId: string): Promise<void> {
         try {
             console.log(`${this.prefix} Deactivate called with id ${deviceId}`);
             const device = await this.deviceDb.GetDevice(deviceId);
@@ -112,7 +112,7 @@ export class DeviceService {
         }
     }
 
-    public async SetDeviceRole(deviceId: string, role: FirmwareRole) {
+    public async SetDeviceRole(deviceId: string, role: FirmwareRole): Promise<boolean> {
         try {
             console.log(`${this.prefix} SetDeviceRole called with id ${deviceId}, role ${role}`);
             const device = await this.deviceDb.GetDevice(deviceId);
@@ -145,7 +145,7 @@ export class DeviceService {
     }
 
 
-    public async SetDeviceInfo(deviceId: string, info: DeviceInfo) {
+    public async SetDeviceInfo(deviceId: string, info: DeviceInfo): Promise<void> {
         try {
             console.log(`${this.prefix} SetDeviceInfo called with id ${deviceId}, info: `);
             console.log(info);
@@ -155,8 +155,6 @@ export class DeviceService {
             if (!device) {
                 throw new Error(`Device doesn't exist`);
             }
-
-            let updatedDevice = device;
 
             const tag = info.tag
             if (tag) {
@@ -173,7 +171,7 @@ export class DeviceService {
                 Object.assign(device, { group })
             }
             
-            this.deviceDb.UpdateDevice(updatedDevice);
+            this.deviceDb.UpdateDevice(device);
         } catch (error) {
             throw error;
         }

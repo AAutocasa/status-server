@@ -1,7 +1,6 @@
 import { Request, Router, Response } from "express";
 import { DeviceService } from "../services";
 import { DeviceInfo, DeviceRoleAssignment } from "../types";
-import { FirmwareRole } from '../types/Firmware.types';
 
 export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => {
     const prefix = `[DeviceRouter]`;
