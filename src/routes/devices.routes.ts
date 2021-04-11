@@ -1,6 +1,7 @@
 import { Request, Router, Response } from "express";
 import { DeviceService } from "../services";
 import { DeviceInfo, DeviceRoleAssignment } from "../types";
+import { FirmwareRole } from '../types/Firmware.types';
 
 export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => {
     const prefix = `[DeviceRouter]`;
@@ -72,16 +73,15 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
 
     /** [PUT] Sets a role to a device */
     router.put('/devices/:deviceId/role', async (req: Request, res: Response) => {
-        console.log(`${prefix} [PUT] '/devices/:deviceId/set-role' called...`);
+        console.log(`${prefix} [PUT] '/devices/:deviceId/role' called`);
         try {
             const id = req.params["deviceId"];
             const assignment = <DeviceRoleAssignment>req.body;
+
             if (!assignment.role) {
                 res.status(400).send(`ERR: No role information found`);
                 return;
             }
-
-            // TODO: Figure out why the fuck the type of role is string
             const result = await deviceSvc.SetDeviceRole(id, assignment.role);
             res.status(200).send(result);
         } catch (error) {
@@ -91,7 +91,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
 
     /** [PUT] Sets naming infos to a device */
     router.put('/devices/:deviceId/infos', async (req: Request, res: Response) => {
-        console.log(`${prefix} [PUT] '/devices/:deviceId/set-infos' called...`);
+        console.log(`${prefix} [PUT] '/devices/:deviceId/infos' called...`);
         try {
             const id = req.params["deviceId"];
             const info = <DeviceInfo>req.body;

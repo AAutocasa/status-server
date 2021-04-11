@@ -13,7 +13,7 @@ export class MQTTDefaultPublisherDelegate implements MQTTPublisherDelegate {
     }
 
     publish(topic: string, payload: string, options: MQTTPublishOptions): void {
-        console.log(`${this.prefix} Publish called to topic ${topic}. Payload ${payload} and options:`);
+        console.log(`   ${this.prefix} Publish called to topic ${topic}. Payload ${payload} and options:`);
         console.log(options);
         if (this._mqttManager) {
             this._mqttManager.publish(topic, payload, options);

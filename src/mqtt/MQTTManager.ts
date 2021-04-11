@@ -12,7 +12,7 @@ export class MQTTManager implements MQTTPublisher {
             const hostWithProtocol = `mqtt://${host}`
 
             if (username || password) {
-                console.log(`${this.prefix} Connecting to host ${host} with username ${username} and password ${password}`);
+                console.log(`${this.prefix} Connecting to host ${host} with username ${username}`);
                 this.mqttClient = mqtt.connect(hostWithProtocol, { username: username, password: password })
             } else {
                 console.log(`${this.prefix} Connecting to host ${host} with no user info`);
@@ -50,7 +50,7 @@ export class MQTTManager implements MQTTPublisher {
     mqttClient: any
 
     publish(topic: string, payload: string, options: MQTTPublishOptions) {
-        console.log(`${this.prefix} Publish called to topic ${topic}. Payload ${payload} and options:`);
+        console.log(`   ${this.prefix} Publish called to topic ${topic}. Payload ${payload} and options:`);
         console.log(options);
         this.mqttClient.publish(topic, payload.toString(), options)
     }

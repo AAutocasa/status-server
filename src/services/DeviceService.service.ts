@@ -44,7 +44,7 @@ export class DeviceService {
                 const updatedDevice = Object.assign(existingDevice, 
                     { 
                         type: heartbeat.type, 
-                        firmwareType: heartbeat.firmwareType,
+                        firmware: heartbeat.firmware,
                         firmwareVersion: heartbeat.firmwareVersion,
                         status: heartbeat.status ,
                         lastHeartbeat: moment().valueOf()
@@ -121,17 +121,18 @@ export class DeviceService {
                 throw new Error(`Device doesn't exist`);
             }
 
-            const firmware = device.firmwareType;
+            const firmware = device.firmware;
             const isValid = await this.firmwareSvc.ValidateFirmwareRole(firmware, role)
-
+            
             if (!isValid) {
                 return false
             }
 
             console.log(role);
             console.log(typeof role);
-            
-            const updatedDevice = Object.assign(device, { role })
+
+            // TODO: Figure out why the fuck the type of role is string and I need to typecast
+            const updatedDevice = Object.assign(device, { role: role })
             this.deviceDb.UpdateDevice(updatedDevice);
 
             console.log(`   ${this.prefix} Publishing to mqtt!`);

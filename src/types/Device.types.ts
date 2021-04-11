@@ -9,7 +9,7 @@ export type Device = {
     type: string,
 
     /** Current applied firmware (RGB_STRIPE, RGB_MATRIX, COFFEE_POT) */
-    firmwareType: FirmwareType,
+    firmware: FirmwareType,
 
     /** Device ID, set on the device (v1.2) */
     firmwareVersion: string,
