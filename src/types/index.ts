@@ -1,8 +1,8 @@
-import { Device, DeviceStatus } from './Device.types';
-import { DeviceDBManager } from './DeviceDB.types';
-import { DeviceHeartbeat, DeviceRoleAssignment, DeviceInfo } from './DeviceRoutes.types';
-import { FirmwareRole, FirmwareType } from './Firmware.types';
-import { FirmwareDBManager } from './FirmwareDB.types';
+import { Device, DeviceStatus } from './device/Device.types';
+import { DeviceDBManager } from './device/DeviceDB.types';
+import { DeviceHeartbeat, DeviceRoleAssignment, DeviceInfo } from './device/DeviceRoutes.types';
+import { FirmwareRole, FirmwareType } from './firmware/Firmware.types';
+import { FirmwareDBManager } from './firmware/FirmwareDB.types';
 
 export {
     Device,

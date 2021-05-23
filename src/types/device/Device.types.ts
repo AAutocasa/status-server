@@ -1,4 +1,4 @@
-import { FirmwareType, FirmwareRole } from './Firmware.types';
+import { FirmwareType, FirmwareRole } from '../firmware/Firmware.types';
 
 export type Device = {
     /* ======= Immutable properties (from the server-side) */
