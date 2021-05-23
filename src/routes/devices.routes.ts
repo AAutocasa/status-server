@@ -1,6 +1,6 @@
 import { Request, Router, Response } from "express";
 import { DeviceService } from "../services";
-import { DeviceInfo, DeviceRoleAssignment } from "../types";
+import { BaseError, DeviceInfo, DeviceRoleAssignment, HTTP400Error } from "../types";
 
 export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => {
     const prefix = `[DeviceRouter]`;
@@ -16,9 +16,11 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         console.log(`${prefix} [GET] '/devices' called...`);
         try {
             const devices = await deviceSvc.GetAllDevices();
+            
             res.status(200).send(devices);
         } catch (error) {
-            res.status(500).send({err: error});
+            const baseError = <BaseError>error;
+            res.status(baseError.httpCode).send(baseError.formatted);
         }
     })
 
@@ -28,9 +30,11 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         try {
             const id = req.params["deviceId"];
             const device = await deviceSvc.GetDevice(id);
+           
             res.status(200).send(device);
         } catch (error) {
-            res.status(500).send({err: error});
+            const baseError = <BaseError>error;
+            res.status(baseError.httpCode).send(baseError.formatted);
         }
     })
 
@@ -40,9 +44,11 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         try {
             const id = req.params["deviceId"];
             await deviceSvc.ActivateDevice(id);
+            
             res.status(200).send();
         } catch (error) {
-            res.status(500).send({err: error});
+            const baseError = <BaseError>error;
+            res.status(baseError.httpCode).send(baseError.formatted);
         }
     })
 
@@ -52,9 +58,11 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         try {
             const id = req.params["deviceId"];
             await deviceSvc.DeactivateDevice(id);
+            
             res.status(200).send();
         } catch (error) {
-            res.status(500).send({err: error});
+            const baseError = <BaseError>error;
+            res.status(baseError.httpCode).send(baseError.formatted);
         }
     })
 
@@ -66,7 +74,8 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
             const device = await deviceSvc.GetDevicesByType(type);
             res.status(200).send(device);
         } catch (error) {
-            res.status(500).send({err: error});
+            const baseError = <BaseError>error;
+            res.status(baseError.httpCode).send(baseError.formatted);
         }
     })
 
@@ -78,13 +87,15 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
             const assignment = <DeviceRoleAssignment>req.body;
 
             if (!assignment.role) {
-                res.status(400).send(`ERR: No role information found`);
-                return;
+                throw new HTTP400Error(`No role information found`);
             }
+
             const result = await deviceSvc.SetDeviceRole(id, assignment.role);
+            
             res.status(200).send(result);
         } catch (error) {
-            res.status(500).send({err: error});
+            const baseError = <BaseError>error;
+            res.status(baseError.httpCode).send(baseError.formatted);
         }
     })
 
@@ -95,9 +106,11 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
             const id = req.params["deviceId"];
             const info = <DeviceInfo>req.body;
             await deviceSvc.SetDeviceInfo(id, info);
+            
             res.status(200).send();
         } catch (error) {
-            res.status(500).send({err: error});
+            const baseError = <BaseError>error;
+            res.status(baseError.httpCode).send(baseError.formatted);
         }
     })
 
@@ -107,9 +120,11 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         try {
             const id = req.params["deviceId"];
             await deviceSvc.DeleteDevice(id);
+            
             res.status(200).send();
         } catch (error) {
-            res.status(500).send({err: error});
+            const baseError = <BaseError>error;
+            res.status(baseError.httpCode).send(baseError.formatted);
         }
     })
 }

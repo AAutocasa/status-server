@@ -6,7 +6,7 @@ export enum HTTPStatusCode {
     INTERNAL_SERVER_ERROR = 500, 
 }
 
-class BaseError extends Error {
+export class BaseError extends Error {
     public readonly name: string
     public readonly httpCode: HTTPStatusCode;
     public readonly errorDescription: string;

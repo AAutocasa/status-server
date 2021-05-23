@@ -1,5 +1,5 @@
 import { MQTTPublisher, MQTTQoS } from '../mqtt';
-import { Device, DeviceDBManager, DeviceStatus, FirmwareRole, DeviceHeartbeat, DeviceInfo } from '../types';
+import { Device, DeviceDBManager, DeviceStatus, FirmwareRole, DeviceHeartbeat, DeviceInfo, HTTP422Error } from '../types';
 import { FirmwareService } from '.';
 import moment from 'moment';
 export class DeviceService {
@@ -82,7 +82,7 @@ export class DeviceService {
             const device = await this.deviceDb.GetDevice(deviceId);
 
             if (!device) {
-                throw new Error(`Device doesn't exist`);
+                throw new HTTP422Error(`No device with the received ID exists`);
             }
 
             device.status = DeviceStatus.Unknown;
@@ -100,7 +100,7 @@ export class DeviceService {
             const device = await this.deviceDb.GetDevice(deviceId);
 
             if (!device) {
-                throw new Error(`Device doesn't exist`);
+                throw new HTTP422Error(`No device with the received ID exists`);
             }
 
             device.status = DeviceStatus.Unknown;
@@ -118,14 +118,14 @@ export class DeviceService {
             const device = await this.deviceDb.GetDevice(deviceId);
 
             if (!device) {
-                throw new Error(`Device doesn't exist`);
+                throw new HTTP422Error(`No device with the received ID exists`);
             }
 
             const firmware = device.firmware;
             const isValid = await this.firmwareSvc.ValidateFirmwareRole(firmware, role)
             
             if (!isValid) {
-                return false
+                throw new HTTP422Error(`The received role is not valid for the device firmware`);
             }
 
             console.log(role);
@@ -153,7 +153,7 @@ export class DeviceService {
             const device = await this.deviceDb.GetDevice(deviceId);
 
             if (!device) {
-                throw new Error(`Device doesn't exist`);
+                throw new HTTP422Error(`No device with the received ID exists`);
             }
 
             const tag = info.tag

@@ -1,4 +1,5 @@
 import express from 'express';
+import { HTTP401Error } from '../types';
 
 export const AuthMiddleware: any = function (validKeys: string[]) {
     return (req: express.Request, res: express.Response, next: any) => {
@@ -7,7 +8,8 @@ export const AuthMiddleware: any = function (validKeys: string[]) {
         console.log(`[AuthMiddleware] Received request with key ${key}`);
 
         if (!validKeys.includes(key)) {
-            res.status(401).send(`ERR: Invalid API key`);
+            const unauthorizedError = new HTTP401Error(`Invalid API key`)
+            res.status(unauthorizedError.httpCode).send(unauthorizedError.formatted);
             return;
         }
 

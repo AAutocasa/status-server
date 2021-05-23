@@ -5,7 +5,7 @@ export class FirmwareService {
 
     constructor(private firmwareDb: FirmwareDBManager) { }
 
-    public async ValidateFirmwareRole(type: FirmwareType, role: FirmwareRole) {
+    public async ValidateFirmwareRole(type: FirmwareType, role: FirmwareRole): Promise<boolean> {
         const roles = await this.firmwareDb.GetRoles(type);
         return roles.filter(r => r == role).length != 0; 
     }
