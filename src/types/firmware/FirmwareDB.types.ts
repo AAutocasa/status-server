@@ -1,5 +1,7 @@
-import { FirmwareRole, FirmwareType } from "..";
+import { FirmwareInfo, FirmwareRoleInfo, FirmwareType } from "..";
 
 export interface FirmwareDBManager {
-    GetRoles(type: FirmwareType): Promise<FirmwareRole[]>;
+    GetFirmwares(): Promise<FirmwareInfo[]>;
+    GetFirmwareInfo(type: FirmwareType): Promise<FirmwareInfo | undefined>;
+    GetRoleInfos(type: FirmwareType): Promise<FirmwareRoleInfo[]>;
 }
