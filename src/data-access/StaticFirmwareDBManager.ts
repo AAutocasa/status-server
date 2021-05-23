@@ -42,7 +42,8 @@ export class StaticFirmwareDBManager implements FirmwareDBManager {
         return new Promise((resolve, reject) => {
             const values = Object.values(this._rolesInfos).map(v => v.info);
             const firmwareInfo = values.find(v => v.firmwareCode == type);
-            resolve(firmwareInfo?.possibleRoles || []);
+            const roles = firmwareInfo ? firmwareInfo.possibleRoles : [];
+            resolve(roles);
         });         
     }
 
