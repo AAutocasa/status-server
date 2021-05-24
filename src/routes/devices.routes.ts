@@ -44,8 +44,9 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         try {
             const id = req.params["deviceId"];
             await deviceSvc.ActivateDevice(id);
+            const device = await deviceSvc.GetDevice(id);
             
-            res.status(200).send();
+            res.status(200).send(device);
         } catch (error) {
             const baseError = <BaseError>error;
             res.status(baseError.httpCode).send(baseError.formatted);
@@ -58,8 +59,9 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
         try {
             const id = req.params["deviceId"];
             await deviceSvc.DeactivateDevice(id);
+            const device = await deviceSvc.GetDevice(id);
             
-            res.status(200).send();
+            res.status(200).send(device);
         } catch (error) {
             const baseError = <BaseError>error;
             res.status(baseError.httpCode).send(baseError.formatted);
@@ -91,7 +93,7 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
             }
 
             const result = await deviceSvc.SetDeviceRole(id, assignment.role);
-            
+
             res.status(200).send(result);
         } catch (error) {
             const baseError = <BaseError>error;

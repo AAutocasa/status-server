@@ -8,6 +8,7 @@ export const AuthMiddleware: any = function (validKeys: string[]) {
         console.log(`[AuthMiddleware] Received request with key ${key}`);
 
         if (!validKeys.includes(key)) {
+            console.log(`[AuthMiddleware] Blocking request...`);
             const unauthorizedError = new HTTP401Error(`Invalid API key`)
             res.status(unauthorizedError.httpCode).send(unauthorizedError.formatted);
             return;
