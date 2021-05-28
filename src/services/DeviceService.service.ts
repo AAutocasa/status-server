@@ -85,7 +85,7 @@ export class DeviceService {
                 throw new HTTP422Error(`No device with the received ID exists`);
             }
 
-            device.status = DeviceStatus.Unknown;
+            device.status = DeviceStatus.Active;
             this.deviceDb.UpdateDevice(device);
             console.log(`   ${this.prefix} Publishing to mqtt!`);
             this.mqttPublisher.publishJSON(`status-device/activate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE }); 
@@ -103,7 +103,7 @@ export class DeviceService {
                 throw new HTTP422Error(`No device with the received ID exists`);
             }
 
-            device.status = DeviceStatus.Unknown;
+            device.status = DeviceStatus.Inactive;
             this.deviceDb.UpdateDevice(device);
             console.log(`   ${this.prefix} Publishing to mqtt!`);
             this.mqttPublisher.publishJSON(`status-device/deactivate`, { deviceId: deviceId }, { qos: MQTTQoS.AT_LEAST_ONCE });       
