@@ -1,16 +1,18 @@
-import { Device, CapabilityCode, CapabilityRole  } from "..";
+import { Device, CapabilityCode, CapabilityRoleCode  } from "..";
 
 export type DeviceHeartbeat = Pick<Device, "id" | "type" | "status"> & {
     capabilities: [{
         code: CapabilityCode,
-        roleCode: CapabilityRole
+        activeRole: CapabilityRoleCode,
+        version: string
     }]
 };
 
 export type DeviceRoleAssignment = {
     capabilities: [{
         code: CapabilityCode,
-        roleCode: CapabilityRole
+        activeRole: CapabilityRoleCode,
+        version: string
     }];
 }
 

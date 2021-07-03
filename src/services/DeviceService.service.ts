@@ -1,13 +1,14 @@
 import { MQTTPublisher, MQTTQoS } from '../mqtt';
-import { Device, DeviceDBManager, DeviceStatus, FirmwareRole, DeviceHeartbeat, DeviceInfo, HTTP422Error } from '../types';
-import { FirmwareService } from '.';
+import { Device, DeviceDBManager, DeviceStatus, DeviceHeartbeat, DeviceInfo, HTTP422Error } from '../types';
+import { CapabilityService } from '.';
 import moment from 'moment';
+import { DeviceCapability } from '../types';
 export class DeviceService {
     readonly prefix = `[DeviceService]`;
 
     constructor(private deviceDb: DeviceDBManager,
                 private mqttPublisher: MQTTPublisher,
-                private firmwareSvc: FirmwareService) { }
+                private capabilitySvc: CapabilityService) { }
 
     public async GetDevice(deviceId: string): Promise<Device | undefined> {
         try {
@@ -39,20 +40,45 @@ export class DeviceService {
             // console.log(`${this.prefix} TriggerHeartbeat called with ${heartbeat.deviceId}`);
             const existingDevice = await this.GetDevice(heartbeat.id);
 
+            // Build capabilities
+            const codes = heartbeat.capabilities.map(c => c.code);
+
+            const capabilities = await this.capabilitySvc.GetCapabilitiesWithCodes(codes);
+            capabilities.sort((a, b) => a.code - b.code);
+
+            const heartbeatCapabilities = heartbeat.capabilities.filter(hb => capabilities.map(c => c.code).includes(hb.code));
+            heartbeatCapabilities.sort((a, b) => a.code - b.code);
+
+            const deviceCapabilities = capabilities.map((c, i) => {
+                const heartbeatInfo = heartbeatCapabilities[i];
+                return <DeviceCapability>{
+                    name: c.name,
+                    code: c.code,
+                    possibleRoles: c.possibleRoles,
+                    activeRoleCode: heartbeatInfo.activeRole,
+                    version: heartbeatInfo.version
+                }
+            })
+
             if (existingDevice) {
                 // console.log(`${this.prefix} Device already exists. Updating heartbeat`);
                 const updatedDevice = Object.assign(existingDevice, 
                     { 
                         type: heartbeat.type, 
-                        firmware: heartbeat.firmware,
-                        firmwareVersion: heartbeat.firmwareVersion,
                         status: heartbeat.status ,
-                        lastHeartbeat: moment().valueOf()
+                        lastHeartbeat: moment().valueOf(),
+                        capabilities: deviceCapabilities,
                     });
                 await this.UpdateDevice(updatedDevice)
             } else {
                 // console.log(`${this.prefix} No device... creating it!`);
-                const newDevice = Object.assign(heartbeat, { lastHeartbeat: moment().valueOf() })
+                const newDevice = <Device>{ 
+                    id: heartbeat.id,
+                    status: heartbeat.status,
+                    type: heartbeat.type,
+                    lastHeartbeat: moment().valueOf(),
+                    capabilities: deviceCapabilities
+                 }
                 await this.UpdateDevice(newDevice)
             }
         } catch (error) {

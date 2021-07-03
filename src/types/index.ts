@@ -1,4 +1,4 @@
-import { Device, DeviceStatus } from './device/Device.types';
+import { Device, DeviceStatus, DeviceCapability } from './device/Device.types';
 import { DeviceDBManager } from './device/DeviceDB.types';
 import { DeviceHeartbeat, DeviceRoleAssignment, DeviceInfo } from './device/DeviceRoutes.types';
 import { Capability, CapabilityRole, CapabilityRoleCode, CapabilityCode } from './capability/Capability.types'; 
@@ -10,6 +10,7 @@ export {
     Device,
     DeviceStatus,
     DeviceDBManager,
+    DeviceCapability,
 
     DeviceHeartbeat,
     DeviceRoleAssignment,

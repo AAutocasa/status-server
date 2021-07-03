@@ -1,4 +1,4 @@
-import { Capability, CapabilityRole } from '../capability/Capability.types';
+import { Capability, CapabilityRoleCode } from '../capability/Capability.types';
 
 export type Device = {
     /* ======= Immutable properties (from the server-side) */
@@ -38,5 +38,5 @@ export enum DeviceStatus {
 
 export type DeviceCapability = Capability & {
     version: string;
-    activeRole: CapabilityRole;
+    activeRoleCode: CapabilityRoleCode;
 }
