@@ -3,6 +3,7 @@ import { Device, DeviceDBManager, DeviceStatus, DeviceHeartbeat, DeviceInfo, HTT
 import { CapabilityService } from '.';
 import moment from 'moment';
 import { DeviceCapability } from '../types';
+import { CapabilityCode, CapabilityRoleCode } from '../types/capability/Capability.types';
 export class DeviceService {
     readonly prefix = `[DeviceService]`;
 
@@ -138,31 +139,34 @@ export class DeviceService {
         }
     }
 
-    public async SetDeviceRole(deviceId: string, role: FirmwareRole): Promise<boolean> {
+    public async SetDeviceRole(deviceId: string, code: CapabilityCode, roleCode: CapabilityRoleCode): Promise<boolean> {
         try {
-            console.log(`${this.prefix} SetDeviceRole called with id ${deviceId}, role ${role}`);
+            console.log(`${this.prefix} SetDeviceRole called with id ${deviceId}, code ${code}, roleCode ${roleCode}`);
             const device = await this.deviceDb.GetDevice(deviceId);
 
             if (!device) {
                 throw new HTTP422Error(`No device with the received ID exists`);
             }
 
-            const firmware = device.firmware;
-            const isValid = await this.firmwareSvc.ValidateFirmwareRole(firmware, role)
+            const capabilities = device.capabilities;
+            const index = capabilities.findIndex(c => c.code == code);
+            if (index < 0) {
+                throw new HTTP422Error(`The device doesn't have that capability`);
+            }
             
+            const capability = capabilities[index];
+            const isValid = await this.capabilitySvc.ValidateRoleCapability(code, roleCode);
             if (!isValid) {
                 throw new HTTP422Error(`The received role is not valid for the device firmware`);
             }
 
-            console.log(role);
-            console.log(typeof role);
-
-            // TODO: Figure out why the fuck the type of role is string and I need to typecast
-            const updatedDevice = Object.assign(device, { role: role })
-            this.deviceDb.UpdateDevice(updatedDevice);
+            capability.activeRoleCode = roleCode
+            device.capabilities[index] = capability;
+            
+            this.deviceDb.UpdateDevice(device);
 
             console.log(`   ${this.prefix} Publishing to mqtt!`);
-            this.mqttPublisher.publishJSON(`status-device/firmware-role`, { deviceId: deviceId, role: role }, { qos: MQTTQoS.AT_LEAST_ONCE });
+            this.mqttPublisher.publishJSON(`status-device/capability-role`, { deviceId: deviceId, code, roleCode }, { qos: MQTTQoS.AT_LEAST_ONCE });
 
             return true;
         } catch (error) {

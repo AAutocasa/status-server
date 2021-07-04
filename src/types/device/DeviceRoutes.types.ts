@@ -12,7 +12,6 @@ export type DeviceRoleAssignment = {
     capabilities: [{
         code: CapabilityCode,
         activeRole: CapabilityRoleCode,
-        version: string
     }];
 }
 

@@ -23,7 +23,7 @@ export type Device = {
     status: DeviceStatus,
 
     /** The capabilities and active roles the device has */
-    capabilities: Capability[];
+    capabilities: DeviceCapability[];
 
     /* ======= Other */
     /** Last time device pinged the server. UTC, ms */
