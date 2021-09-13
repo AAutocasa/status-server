@@ -32,8 +32,8 @@ export type Device = {
 
 export enum DeviceStatus {
     Unknown = -1,
-    Active = 0,
-    Inactive = 1
+    Inactive = 0,
+    Active = 1,
 }
 
 export type DeviceCapability = Capability & {
