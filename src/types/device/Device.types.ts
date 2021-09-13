@@ -1,4 +1,4 @@
-import { FirmwareType, FirmwareRole } from '../firmware/Firmware.types';
+import { Capability, CapabilityRoleCode } from '../capability/Capability.types';
 
 export type Device = {
     /* ======= Immutable properties (from the server-side) */
@@ -7,12 +7,6 @@ export type Device = {
 
     /** Device type (ESP8266, others) */
     type: string,
-
-    /** Current applied firmware (RGB_STRIPE, RGB_MATRIX, COFFEE_POT) */
-    firmware: FirmwareType,
-
-    /** Device ID, set on the device (v1.2) */
-    firmwareVersion: string,
 
     /* ======= Mutable properties that are kept only on the server */
     /** Friendly-name to the device */
@@ -24,12 +18,12 @@ export type Device = {
     /** Location ("BEDROOM", "LIVING_ROOM", ...) */
     location?: string,
 
-    /* ======= Mutable properties that are set to the device */
+    /* ======= Mutable properties that are (partially or totally) set to the device */
     /** Active or inactive */
     status: DeviceStatus,
 
-    /** Role of the device, needs to be allowed by the firmware */
-    role?: FirmwareRole,
+    /** The capabilities and active roles the device has */
+    capabilities: DeviceCapability[];
 
     /* ======= Other */
     /** Last time device pinged the server. UTC, ms */
@@ -39,5 +33,10 @@ export type Device = {
 export enum DeviceStatus {
     Unknown = -1,
     Inactive = 0,
-    Active = 1
+    Active = 1,
+}
+
+export type DeviceCapability = Capability & {
+    version: string;
+    activeRoleCode: CapabilityRoleCode;
 }

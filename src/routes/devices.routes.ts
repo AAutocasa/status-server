@@ -88,11 +88,17 @@ export const DeviceRouter = (router: Router, deviceSvc: DeviceService): void => 
             const id = req.params["deviceId"];
             const assignment = <DeviceRoleAssignment>req.body;
 
-            if (!assignment.role) {
+            if (!assignment.capabilities) {
                 throw new HTTP400Error(`No role information found`);
             }
 
-            const result = await deviceSvc.SetDeviceRole(id, assignment.role);
+            let result = true;
+            assignment.capabilities.forEach(async c => {
+                const opResult = await deviceSvc.SetDeviceRole(id, c.code, c.activeRole);
+                if (opResult == false) {
+                    result = opResult
+                }
+            });
 
             res.status(200).send(result);
         } catch (error) {

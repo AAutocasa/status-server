@@ -1,5 +1,18 @@
-import { Device } from "..";
+import { Device, CapabilityCode, CapabilityRoleCode  } from "..";
 
-export type DeviceHeartbeat = Pick<Device, "id" | "type" | "firmware" | "firmwareVersion" | "status">;
-export type DeviceRoleAssignment = Pick<Device, "role">
+export type DeviceHeartbeat = Pick<Device, "id" | "type" | "status"> & {
+    capabilities: [{
+        code: CapabilityCode,
+        activeRole: CapabilityRoleCode,
+        version: string
+    }]
+};
+
+export type DeviceRoleAssignment = {
+    capabilities: [{
+        code: CapabilityCode,
+        activeRole: CapabilityRoleCode,
+    }];
+}
+
 export type DeviceInfo = Pick<Device, "tag" | "group" | "location">
