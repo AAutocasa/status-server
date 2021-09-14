@@ -42,24 +42,28 @@ export class DeviceService {
             const existingDevice = await this.GetDevice(heartbeat.id);
 
             // Build capabilities
-            const codes = heartbeat.capabilities.map(c => c.code);
+            let deviceCapabilities: DeviceCapability[] = [];
 
-            const capabilities = await this.capabilitySvc.GetCapabilitiesWithCodes(codes);
-            capabilities.sort((a, b) => a.code - b.code);
-
-            const heartbeatCapabilities = heartbeat.capabilities.filter(hb => capabilities.map(c => c.code).includes(hb.code));
-            heartbeatCapabilities.sort((a, b) => a.code - b.code);
-
-            const deviceCapabilities = capabilities.map((c, i) => {
-                const heartbeatInfo = heartbeatCapabilities[i];
-                return <DeviceCapability>{
-                    name: c.name,
-                    code: c.code,
-                    possibleRoles: c.possibleRoles,
-                    activeRoleCode: heartbeatInfo.activeRole,
-                    version: heartbeatInfo.version
-                }
-            })
+            if (heartbeat.capabilities) {
+                const codes = heartbeat.capabilities.map(c => c.code);
+    
+                const capabilities = await this.capabilitySvc.GetCapabilitiesWithCodes(codes);
+                capabilities.sort((a, b) => a.code - b.code);
+    
+                const heartbeatCapabilities = heartbeat.capabilities.filter(hb => capabilities.map(c => c.code).includes(hb.code));
+                heartbeatCapabilities.sort((a, b) => a.code - b.code);
+    
+                deviceCapabilities = capabilities.map((c, i) => {
+                    const heartbeatInfo = heartbeatCapabilities[i];
+                    return <DeviceCapability>{
+                        name: c.name,
+                        code: c.code,
+                        possibleRoles: c.possibleRoles,
+                        activeRoleCode: heartbeatInfo.activeRole,
+                        version: heartbeatInfo.version
+                    }
+                })
+            }
 
             if (existingDevice) {
                 // console.log(`${this.prefix} Device already exists. Updating heartbeat`);

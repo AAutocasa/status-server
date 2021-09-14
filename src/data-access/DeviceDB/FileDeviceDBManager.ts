@@ -20,9 +20,9 @@ export class FileDeviceDBManager implements DeviceDBManager {
             if (err) { 
                 console.log(`${prefix} ReadDB error: ${err}. Creating file...!`);
                 this.PersistDB(filePath);
-                console.log(`${prefix} Created file...!`);
+                console.log(`${prefix} Created file!`);
             }
-            this._devices = data;
+            this._devices = data || {};
         })
     }
 
