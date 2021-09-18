@@ -2,7 +2,7 @@ import { MQTTQoS, MQTTRouter, MQTTSubscriptionOptions } from "../mqtt";
 import { DeviceService } from "../services";
 import { DeviceHeartbeat } from "../types";
 
-export const DeviceMQTT = (router: MQTTRouter, deviceSvc: DeviceService): void => {
+export const DeviceMQTTRouter = (router: MQTTRouter, deviceSvc: DeviceService): void => {
     const prefix = `[DeviceMQTT]`;
 
     router.onReceive('status/heartbeat', 
